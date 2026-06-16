@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convite — Chá da Manuela & Vovô Dailton</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --rose:     #D4607A;
+    --rose-lt:  #F0A3B4;
+    --blush:    #FAE8EE;
+    --cream:    #FDF6F9;
+    --mauve:    #9B3A5A;
+    --gold:     #C9956A;
+    --ink:      #2E1A24;
+    --mist:     #EDD9E5;
+    --sage:     #7A9E7E;
+  }
+
+  @keyframes fallHeart {
+    0%   { transform: translateY(-60px) rotate(var(--r)) scale(var(--s)); opacity: 0; }
+    10%  { opacity: 0.8; }
+    90%  { opacity: 0.6; }
+    100% { transform: translateY(110vh) rotate(calc(var(--r) + 40deg)) scale(var(--s)); opacity: 0; }
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(22px);} to{opacity:1;transform:translateY(0);} }
+  @keyframes shimmer { 0%{background-position:0% 50%;} 100%{background-position:200% 50%;} }
+  @keyframes bounceDot { 0%,80%,100%{transform:scale(0);} 40%{transform:scale(1);} }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--blush);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 16px;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ── HEART RAIN ── */
+  .heart-rain {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .heart-rain span {
+    position: absolute; top: -60px;
+    font-size: var(--fs);
+    animation: fallHeart var(--dur) linear var(--delay) infinite;
+  }
+
+  /* ── COVER SCREEN ── */
+  #cover {
+    position: fixed; inset: 0; z-index: 100;
+    background: linear-gradient(160deg, #9B3A5A 0%, #D4607A 45%, #C9956A 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  #cover.hide {
+    opacity: 0; pointer-events: none; transform: scale(1.04);
+  }
+  .cover-inner {
+    text-align: center;
+    animation: fadeUp .8s ease both;
+  }
+  .cover-badge {
+    display: inline-block;
+    background: rgba(255,255,255,.15);
+    border: 1.5px solid rgba(255,255,255,.4);
+    color: rgba(255,255,255,.9);
+    font-size: .72rem; letter-spacing: 1.8px;
+    text-transform: uppercase; padding: 5px 20px;
+    border-radius: 30px; margin-bottom: 24px;
+  }
+  .cover-hearts {
+    font-size: 3.8rem;
+    animation: pulse 2.2s ease-in-out infinite;
+    display: block; margin-bottom: 18px;
+    filter: drop-shadow(0 4px 14px rgba(0,0,0,.25));
+  }
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    color: #fff;
+    font-size: clamp(2rem, 7vw, 3.2rem);
+    font-weight: 700; line-height: 1.15;
+    text-shadow: 0 3px 16px rgba(0,0,0,.2);
+    margin-bottom: 10px;
+  }
+  .cover-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: rgba(255,255,255,.85);
+    font-size: 1.15rem; margin-bottom: 36px;
+  }
+  .cover-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.95);
+    color: var(--mauve); font-family: 'Lato', sans-serif;
+    font-size: .9rem; font-weight: 700;
+    padding: 14px 36px; border-radius: 50px;
+    letter-spacing: .6px;
+    box-shadow: 0 6px 30px rgba(0,0,0,.18);
+    transition: transform .18s, box-shadow .18s;
+    border: none;
+  }
+  .cover-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(0,0,0,.22); }
+  .cover-date {
+    margin-top: 28px;
+    color: rgba(255,255,255,.7);
+    font-size: .82rem; letter-spacing: .8px;
+  }
+
+  /* ── MAIN CARD ── */
+  .card {
+    position: relative; z-index: 1;
+    background: var(--cream);
+    border-radius: 28px;
+    max-width: 580px; width: 100%;
+    overflow: hidden;
+    box-shadow: 0 12px 60px rgba(155,58,90,0.18), 0 2px 8px rgba(155,58,90,0.10);
+    animation: fadeUp .9s ease both;
+  }
+
+  .banner {
+    background: linear-gradient(135deg, var(--mauve) 0%, var(--rose) 50%, var(--gold) 100%);
+    background-size: 200% 200%;
+    animation: shimmer 5s linear infinite alternate;
+    padding: 36px 32px 28px;
+    text-align: center;
+    position: relative;
+  }
+  .banner::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: -18px; left: 0; right: 0;
+    height: 36px;
+    background: var(--cream);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  }
+  .banner-icon {
+    font-size: 2.8rem;
+    animation: pulse 2.2s ease-in-out infinite;
+    display: inline-block;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
+  }
+  .banner h1 {
+    font-family: 'Playfair Display', serif;
+    color: #fff;
+    font-size: clamp(1.45rem, 5vw, 2rem);
+    font-weight: 700;
+    margin-top: 10px;
+    line-height: 1.2;
+    letter-spacing: .5px;
+    text-shadow: 0 2px 8px rgba(0,0,0,.18);
+  }
+  .banner .subtitle {
+    color: rgba(255,255,255,.88);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    margin-top: 6px;
+    letter-spacing: .8px;
+  }
+
+  .pill-divider {
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; margin: 38px 32px 0; color: var(--rose);
+  }
+  .pill-divider::before, .pill-divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(to right, transparent, var(--rose-lt));
+  }
+  .pill-divider::after { background: linear-gradient(to left, transparent, var(--rose-lt)); }
+  .pill-divider span { font-size: 1.2rem; }
+
+  /* ── EVENT BLOCKS ── */
+  .events { display: flex; flex-direction: column; padding: 18px 32px 0; }
+
+  .event-block {
+    border-radius: 18px; padding: 22px 24px;
+    margin-bottom: 18px; position: relative; overflow: hidden;
+    animation: fadeUp .9s ease both;
+  }
+  .event-block.baby {
+    background: linear-gradient(135deg, #fff0f5 0%, #fce8ef 100%);
+    border: 1.5px solid var(--rose-lt);
+  }
+  .event-block.birthday {
+    background: linear-gradient(135deg, #fff8f2 0%, #fdeee2 100%);
+    border: 1.5px solid #e8bfa0;
+  }
+  .event-block .tag {
+    display: inline-block;
+    padding: 3px 14px; border-radius: 20px;
+    font-size: .72rem; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .baby .tag    { background: var(--rose); color: #fff; }
+  .birthday .tag { background: var(--gold); color: #fff; }
+
+  .event-block h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem; font-weight: 700;
+    color: var(--ink); line-height: 1.25;
+  }
+  .event-block .event-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; color: var(--rose);
+    font-size: 1rem; margin-top: 2px;
+  }
+  .birthday .event-sub { color: var(--gold); }
+
+  .event-block p {
+    font-size: .9rem; color: #6a4050;
+    margin-top: 10px; line-height: 1.6;
+  }
+  .event-block .corner-icon {
+    position: absolute; right: 20px; top: 18px;
+    font-size: 2rem; opacity: .18;
+  }
+
+  /* ── INFO SECTION ── */
+  .info-section {
+    margin: 4px 32px 0;
+    background: linear-gradient(135deg, var(--mist) 0%, var(--blush) 100%);
+    border-radius: 18px; padding: 20px 24px;
+    border: 1.5px solid var(--rose-lt);
+  }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .info-item { display: flex; flex-direction: column; gap: 2px; }
+  .info-item .label {
+    font-size: .68rem; font-weight: 700;
+    letter-spacing: 1.4px; text-transform: uppercase; color: var(--rose);
+  }
+  .info-item .value {
+    font-family: 'Playfair Display', serif;
+    font-size: .98rem; color: var(--ink); font-weight: 700;
+  }
+  .info-item .value.small {
+    font-size: .88rem; font-weight: 400;
+    font-family: 'Lato', sans-serif; color: #6a4050;
+  }
+
+  /* ── QUOTE ── */
+  .quote-wrap { margin: 18px 32px; text-align: center; }
+  .quote-wrap blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 1.1rem;
+    color: var(--mauve); line-height: 1.7;
+    padding: 0 24px;
+  }
+  .quote-wrap blockquote::before,
+  .quote-wrap blockquote::after {
+    content: '❤'; font-style: normal;
+    font-size: .8rem; color: var(--rose-lt); vertical-align: middle;
+  }
+  .quote-wrap blockquote::before { margin-right: 8px; }
+  .quote-wrap blockquote::after  { margin-left:  8px; }
+
+  /* ── GIFT LIST SECTION ── */
+  .gift-section {
+    margin: 0 32px;
+    background: linear-gradient(135deg, #f0fff4 0%, #e8f5e9 100%);
+    border-radius: 18px; padding: 22px 24px;
+    border: 1.5px solid #a5d6a7;
+  }
+  .gift-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; color: #2e5c30;
+    margin-bottom: 4px;
+  }
+  .gift-section .gift-desc {
+    font-size: .83rem; color: #4a7a4c; margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .search-wrap {
+    display: flex; gap: 8px; align-items: center;
+    background: #fff; border-radius: 12px;
+    border: 1.5px solid #a5d6a7; padding: 8px 14px;
+    margin-bottom: 14px;
+  }
+  .search-wrap input {
+    border: none; outline: none; flex: 1;
+    font-family: 'Lato', sans-serif;
+    font-size: .95rem; color: var(--ink);
+    background: transparent;
+  }
+  .search-wrap input::placeholder { color: #b0bfb0; }
+  .search-icon { font-size: 1.1rem; }
+
+  #gift-result {
+    min-height: 0;
+    transition: all .3s ease;
+  }
+  .gift-card {
+    background: #fff; border-radius: 14px;
+    border: 1.5px solid #a5d6a7;
+    padding: 18px 20px;
+    animation: fadeUp .4s ease both;
+  }
+  .gift-card .gc-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; color: var(--ink); margin-bottom: 4px;
+  }
+  .gift-card .gc-gift {
+    display: inline-block;
+    background: var(--rose); color: #fff;
+    padding: 4px 16px; border-radius: 20px;
+    font-size: .82rem; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    margin: 8px 0;
+  }
+  .gift-card .gc-note {
+    font-size: .82rem; color: #4a7a4c; line-height: 1.5;
+    margin-top: 8px;
+  }
+  .gift-card .gc-check {
+    margin-top: 12px;
+    font-size: .8rem; color: #2e5c30;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .gift-card .gc-check.confirmed { color: var(--sage); font-weight: 700; }
+  .gift-not-found {
+    text-align: center; padding: 16px 0;
+    font-size: .88rem; color: #9a7a6a;
+  }
+
+  .suggestion-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff; border: 1.5px solid var(--rose-lt);
+    border-radius: 12px; padding: 12px 16px;
+    margin-bottom: 8px; cursor: pointer;
+    transition: background .18s, border-color .18s;
+  }
+  .suggestion-item:hover {
+    background: #fff0f5; border-color: var(--rose);
+  }
+  .suggestion-name {
+    font-size: .92rem; color: var(--ink); font-weight: 600;
+  }
+  .suggestion-arrow {
+    color: var(--rose); font-size: 1rem;
+  }
+
+  /* ── RSVP SECTION ── */
+  .rsvp-section {
+    margin: 18px 32px 0;
+    background: linear-gradient(135deg, var(--blush) 0%, var(--mist) 100%);
+    border-radius: 18px; padding: 22px 24px;
+    border: 1.5px solid var(--rose-lt);
+  }
+  .rsvp-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; color: var(--mauve);
+    margin-bottom: 4px;
+  }
+  .rsvp-section .rsvp-desc {
+    font-size: .83rem; color: #6a4050; margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .form-field { margin-bottom: 12px; }
+  .form-field label {
+    display: block;
+    font-size: .7rem; font-weight: 700;
+    letter-spacing: 1.3px; text-transform: uppercase;
+    color: var(--rose); margin-bottom: 5px;
+  }
+  .form-field input, .form-field select, .form-field textarea {
+    width: 100%; border: 1.5px solid var(--rose-lt);
+    border-radius: 10px; padding: 10px 14px;
+    font-family: 'Lato', sans-serif; font-size: .9rem;
+    color: var(--ink); background: #fff;
+    outline: none; transition: border-color .2s;
+  }
+  .form-field input:focus, .form-field select:focus, .form-field textarea:focus {
+    border-color: var(--rose);
+  }
+  .form-field textarea { resize: vertical; min-height: 70px; }
+
+  .radio-group {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .radio-opt {
+    display: flex; align-items: center; gap: 6px;
+    background: #fff; border: 1.5px solid var(--rose-lt);
+    border-radius: 10px; padding: 8px 16px;
+    cursor: pointer; transition: border-color .2s, background .2s;
+    font-size: .88rem; color: var(--ink);
+  }
+  .radio-opt input[type=radio] { display: none; }
+  .radio-opt.selected {
+    border-color: var(--rose); background: #fff0f5;
+    font-weight: 700; color: var(--rose);
+  }
+
+  .submit-btn {
+    width: 100%; margin-top: 16px;
+    background: linear-gradient(135deg, var(--mauve) 0%, var(--rose) 100%);
+    color: #fff; border: none; border-radius: 14px;
+    padding: 14px; font-family: 'Lato', sans-serif;
+    font-size: .95rem; font-weight: 700;
+    letter-spacing: .6px; cursor: pointer;
+    transition: opacity .2s, transform .18s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .submit-btn:hover { opacity: .92; transform: translateY(-1px); }
+  .submit-btn:disabled { opacity: .6; cursor: default; transform: none; }
+
+  .dot-loader span {
+    display: inline-block; width: 7px; height: 7px;
+    border-radius: 50%; background: #fff; margin: 0 2px;
+    animation: bounceDot 1.4s ease-in-out infinite both;
+  }
+  .dot-loader span:nth-child(2) { animation-delay: .16s; }
+  .dot-loader span:nth-child(3) { animation-delay: .32s; }
+
+  .success-msg {
+    display: none; text-align: center;
+    padding: 20px; animation: fadeUp .5s ease both;
+  }
+  .success-msg .s-icon { font-size: 2.5rem; margin-bottom: 10px; }
+  .success-msg h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; color: var(--mauve); margin-bottom: 6px;
+  }
+  .success-msg p { font-size: .88rem; color: #6a4050; line-height: 1.6; }
+
+  /* ── FOOTER ── */
+  .footer-hearts {
+    text-align: center;
+    padding: 18px 0 28px;
+    font-size: 1.4rem; letter-spacing: 6px; color: var(--rose-lt);
+  }
+
+  @media (max-width: 420px) {
+    .events, .info-section, .quote-wrap, .pill-divider,
+    .gift-section, .rsvp-section { margin-left: 18px; margin-right: 18px; }
+    .info-grid { grid-template-columns: 1fr; }
+    .banner { padding: 28px 18px 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ COVER SCREEN ══ -->
+<div id="cover" role="button" aria-label="Abrir convite" tabindex="0">
+  <div class="cover-inner">
+    <span class="cover-badge">05 de Julho de 2025 · 13h</span>
+    <span class="cover-hearts">💕</span>
+    <h1 class="cover-title">Um dia de<br>amor duplo</h1>
+    <p class="cover-sub">Chá de Fraldas da Manuela &amp; Aniversário do Vovô Dailton</p>
+    <button class="cover-btn">
+      ✨ Abrir convite
+    </button>
+    <p class="cover-date">Toque para ver detalhes, lista de presentes e confirmar presença</p>
+  </div>
+</div>
+
+<!-- ══ HEART RAIN ══ -->
+<div class="heart-rain" aria-hidden="true" id="rain"></div>
+
+<!-- ══ MAIN CARD ══ -->
+<div class="card" role="main">
+
+  <div class="banner">
+    <div class="banner-icon">💕</div>
+    <h1>Chuva de Amor<br>&amp; Celebração da Vida</h1>
+    <p class="subtitle">Um dia duplo, cheio de amor e gratidão</p>
+  </div>
+
+  <div class="pill-divider"><span>🌸</span></div>
+
+  <div class="events">
+
+    <div class="event-block baby" style="animation-delay:.15s">
+      <span class="corner-icon">👶</span>
+      <span class="tag">Chá de Fraldas</span>
+      <h2>Chuva de Amor — Manuela</h2>
+      <p class="event-sub">A chegada de um novo coração</p>
+      <p>Com alegria e muito amor, convidamos você para celebrar a chegada da nossa pequena Manuela tão esperada. Venha encher este momento de carinho, abraços!</p>
+    </div>
+
+    <div class="event-block birthday" style="animation-delay:.3s">
+      <span class="corner-icon">🎂</span>
+      <span class="tag">Aniversário</span>
+      <h2>Vovô Dailton — 71 Anos</h2>
+      <p class="event-sub">Celebrando uma vida de amor e histórias</p>
+      <p>71 anos de vida plena, de risos que aquecem e de amor que transborda. Vovô Dailton, hoje celebramos tudo que você é para nós — nossa raiz, nosso orgulho e nossa bênção.</p>
+    </div>
+
+  </div>
+
+  <div class="info-section">
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="label">📅 Data</span>
+        <span class="value">05 de Julho de 2025</span>
+      </div>
+      <div class="info-item">
+        <span class="label">🕑 Horário</span>
+        <span class="value">13 horas</span>
+      </div>
+      <div class="info-item">
+        <span class="label">📍 Local</span>
+        <span class="value small">Conecta Itaquera<br>Rua Italina, 203<br>Vila Carmosina — SP</span>
+      </div>
+      <div class="info-item">
+        <span class="label">🏠 Espaço</span>
+        <span class="value small">Salão de Festas</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="quote-wrap">
+    <blockquote>
+      "Dois corações que transbordam amor —<br>
+      o da bebê que chega e o do vovô que celebra a vida."
+    </blockquote>
+  </div>
+
+  <!-- ══ GIFT LIST ══ -->
+  <div class="pill-divider" style="margin-top:0"><span>🎁</span></div>
+
+  <div class="gift-section" style="margin-top:18px">
+    <h3>🍼 Confirmar presença e presente</h3>
+    <p class="gift-desc">
+      Digite seu nome para encontrar sua sugestão de presente — só você vê! 💕
+    </p>
+
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="gift-search" placeholder="Digite seu nome…" autocomplete="off" oninput="onGuestSearch()" />
+    </div>
+
+    <div id="guest-suggestions"></div>
+    <div id="gift-result"></div>
+  </div>
+
+  <!-- ══ RSVP FORM ══ -->
+  <div class="rsvp-section" id="rsvp-section" style="display:none">
+    <h3>✉️ Confirmar presença</h3>
+    <p class="rsvp-desc">Preencha abaixo para que a família saiba que você vem. Cada confirmação é recebida com muito amor! 🌸</p>
+
+    <div id="rsvp-form-wrap">
+      <div class="form-field">
+        <label>Seu nome</label>
+        <input type="text" id="rsvp-name" placeholder="Como você aparece na lista" readonly style="background:#f9f0f4;cursor:default;" />
+      </div>
+
+      <div class="form-field">
+        <label>Presente sugerido</label>
+        <input type="text" id="rsvp-presente-display" readonly style="background:#f9f0f4;cursor:default;font-weight:700;color:var(--rose);" />
+      </div>
+
+      <div class="form-field">
+        <label>Quantas pessoas vêm com você?</label>
+        <select id="rsvp-qty">
+          <option value="1">Só eu</option>
+          <option value="2">2 pessoas</option>
+          <option value="3">3 pessoas</option>
+          <option value="4">4 pessoas</option>
+          <option value="5">5 ou mais</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Mensagem carinhosa (opcional)</label>
+        <textarea id="rsvp-msg" placeholder="Deixe um recado para a família…"></textarea>
+      </div>
+
+      <button class="submit-btn" id="rsvp-btn" onclick="submitRSVP()">
+        <span id="btn-text">💌 Confirmar minha presença</span>
+      </button>
+    </div>
+
+    <div class="success-msg" id="success-msg">
+      <div class="s-icon">🎉</div>
+      <h4>Presença confirmada!</h4>
+      <p>Que alegria ter você! A família já foi avisada e mal pode esperar para te abraçar. Nos vemos em 05 de Julho! 💕</p>
+    </div>
+  </div>
+
+  <div class="footer-hearts">♥ ♥ ♥</div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+// CONFIGURAÇÃO — substitua pela URL do seu Google Apps Script após criar
+// Veja instruções no final deste arquivo
+// ──────────────────────────────────────────────
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzIkee9USwi6OLUxjhGC89uPsafakp_yQaJFHSm-yO8wF61efKFQKoHP9fVwVEL9PySWg/exec';
+
+// ──────────────────────────────────────────────
+// LISTA DE PRESENTES (gerada da planilha LISTA_ANA_1.xlsx)
+// Formato: { nome, presente, grupo }
+// ──────────────────────────────────────────────
+const LISTA = [
+  { nome: 'ANA', presente: 'Fralda P', grupo: 1 },
+  { nome: 'NICOLAS', presente: 'Fralda P', grupo: 1 },
+  { nome: 'ALESSANDRA VÓZINHA', presente: 'Fralda P', grupo: 1 },
+  { nome: 'RONALDO VOZINHO', presente: 'Fralda P', grupo: 1 },
+  { nome: 'MILENA TIA CHATA', presente: 'Fralda P', grupo: 1 },
+  { nome: 'HENRIQUE TIO MANÉ', presente: 'Fralda P', grupo: 1 },
+  { nome: 'GEOVANNE TIO BONZINHO', presente: 'Fralda P', grupo: 1 },
+  { nome: 'LUCILA NONNA', presente: 'Fralda GG', grupo: 2 },
+  { nome: 'DAILTON NONNO', presente: 'Fralda GG', grupo: 2 },
+  { nome: 'RENATA BALHASS', presente: 'Fralda P', grupo: 3 },
+  { nome: 'JAMAL BALHASS', presente: 'Fralda P', grupo: 3 },
+  { nome: 'OLGA BALHASS', presente: 'Fralda P', grupo: 3 },
+  { nome: 'MELISSA MARTINS', presente: 'Fralda P', grupo: 3 },
+  { nome: 'STEFFANY BALHASS', presente: 'Fralda M', grupo: 4 },
+  { nome: 'GABRIEL RAMOS', presente: 'Fralda M', grupo: 4 },
+  { nome: 'CINTIA BACHMEYER', presente: 'Fralda M', grupo: 5 },
+  { nome: 'ADRIANO BACHMEYER', presente: 'Fralda M', grupo: 5 },
+  { nome: 'VANDERLEY (TIO WANDER)', presente: 'Fralda M', grupo: 5 },
+  { nome: 'LUZINETE BISA', presente: 'Fralda M', grupo: 6 },
+  { nome: 'ANDREIA RAMOS', presente: 'Fralda GG', grupo: 37 },
+  { nome: 'MATHEUS NERI', presente: 'Fralda G', grupo: 7 },
+  { nome: 'ANA PAULA', presente: 'Fralda G', grupo: 7 },
+  { nome: 'ROSANGELA (TIA RO)', presente: 'Fralda GG', grupo: 8 },
+  { nome: 'NADIA (TIA NADIA)', presente: 'Fralda M', grupo: 9 },
+  { nome: 'DANIELA', presente: 'Fralda P', grupo: 9 },
+  { nome: 'VITOR', presente: 'Fralda GG', grupo: 10 },
+  { nome: 'TAIS', presente: 'Fralda GG', grupo: 10 },
+  { nome: 'FLAVIA MENDES', presente: 'Fralda M', grupo: 11 },
+  { nome: 'RAIMUNDA', presente: 'Fralda G', grupo: 12 },
+  { nome: 'DANI MENDES', presente: 'Fralda G', grupo: 13 },
+  { nome: 'CARLA MENDES', presente: 'Fralda M', grupo: 14 },
+  { nome: 'FABI', presente: 'Fralda G', grupo: 15 },
+  { nome: 'JEAN', presente: 'Fralda G', grupo: 15 },
+  { nome: 'ENZO', presente: 'Fralda G', grupo: 15 },
+  { nome: 'LORENA', presente: 'Fralda G', grupo: 15 },
+  { nome: 'RAILDA', presente: 'Fralda M', grupo: 16 },
+  { nome: 'ARTUR', presente: 'Fralda M', grupo: 16 },
+  { nome: 'CLEUZA', presente: 'Fralda GG', grupo: 17 },
+  { nome: 'MILTON', presente: 'Fralda GG', grupo: 17 },
+  { nome: 'SOLANGE', presente: 'Fralda G', grupo: 18 },
+  { nome: 'JOSÉ CARLOS', presente: 'Fralda G', grupo: 18 },
+  { nome: 'CRISPIM', presente: 'Fralda M', grupo: 19 },
+  { nome: 'DACY', presente: 'Fralda M', grupo: 19 },
+  { nome: 'ALINE', presente: 'Fralda GG', grupo: 20 },
+  { nome: 'JOANA', presente: 'Fralda GG', grupo: 20 },
+  { nome: 'RUTE', presente: 'Fralda G', grupo: 21 },
+  { nome: 'WALTER', presente: 'Fralda G', grupo: 21 },
+  { nome: 'DANIELA', presente: 'Fralda M', grupo: 22 },
+  { nome: 'DANILO', presente: 'Fralda M', grupo: 22 },
+  { nome: 'TALITA', presente: 'Fralda G', grupo: 23 },
+  { nome: 'LAFITTE', presente: 'Fralda G', grupo: 23 },
+  { nome: 'MÃE DA TALITA', presente: 'Fralda P', grupo: 24 },
+  { nome: 'ANA -HEITOR', presente: 'Fralda G', grupo: 25 },
+  { nome: 'RODRIGO - HEITOR', presente: 'Fralda G', grupo: 25 },
+  { nome: 'LUCIANA', presente: 'Fralda G', grupo: 26 },
+  { nome: 'YANN', presente: 'Fralda G', grupo: 26 },
+  { nome: 'NOEMI', presente: 'Fralda M', grupo: 27 },
+  { nome: 'GUSTAVO', presente: 'Fralda M', grupo: 27 },
+  { nome: 'MARIA - VÓ GABRIEL', presente: 'Fralda G', grupo: 28 },
+  { nome: 'VÔ DO GABRIEL', presente: 'Fralda G', grupo: 28 },
+  { nome: 'STEFANI', presente: 'Fralda M', grupo: 29 },
+  { nome: 'VITOR', presente: 'Fralda M', grupo: 29 },
+  { nome: 'GEORGE', presente: 'Fralda G', grupo: 30 },
+  { nome: 'BEATRIZ', presente: 'Fralda M', grupo: 31 },
+  { nome: 'FELIPE', presente: 'Fralda M', grupo: 31 },
+  { nome: 'LAURA', presente: 'Fralda M', grupo: 31 },
+  { nome: 'EDUARDO (TIO DUDU)', presente: 'Fralda G', grupo: 32 },
+  { nome: 'MARCELO (TIO MARCELO)', presente: 'Fralda GG', grupo: 33 },
+  { nome: 'TALITA', presente: 'Fralda G', grupo: 34 },
+  { nome: 'ALEX', presente: 'Fralda G', grupo: 34 },
+  { nome: 'HAIDE', presente: 'Fralda M', grupo: 35 },
+  { nome: 'MARCELO (MARCELINHO)', presente: 'Fralda G', grupo: 36 },
+  { nome: 'LARISSA', presente: 'Fralda G', grupo: 36 },
+  { nome: 'MARILDA PASSUELO', presente: 'Fralda M', grupo: 37 },
+  { nome: 'BEATRIZ DOBERL', presente: 'Fralda M', grupo: 38 },
+  { nome: 'PATRICIA DOBERL', presente: 'Fralda G', grupo: 39 },
+  { nome: 'JOÃO PAULO', presente: 'Fralda G', grupo: 39 },
+];
+
+const sizeNote = {
+  'Fralda P':  'Fraldas P — são as menores, para os primeiros dias da bebê. Qualquer marca está ótima! 🍼',
+  'Fralda M':  'Fraldas M — tamanho médio, ótimas para quando a Manuela crescer um pouquinho. 💕',
+  'Fralda G':  'Fraldas G — tamanho grande, vão durar bastante e são muito usadas! ✨',
+  'Fralda GG': 'Fraldas GG — as maiores! A Manuela vai ficar grandinha logo. Obrigada pelo carinho! 🌸',
+};
+
+// ─── COVER ───
+const cover = document.getElementById('cover');
+function openInvite() {
+  cover.classList.add('hide');
+  document.body.style.overflow = '';
+}
+cover.addEventListener('click', openInvite);
+cover.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') openInvite(); });
+
+// ─── HEART RAIN ───
+const rain = document.getElementById('rain');
+const hearts = ['❤','💕','💗','💖','🌸','💓','♥','💝'];
+for(let i = 0; i < 28; i++) {
+  const s = document.createElement('span');
+  const left  = Math.random() * 100;
+  const size  = (Math.random() * 1.1 + 0.7).toFixed(2);
+  const dur   = (Math.random() * 6 + 7).toFixed(1);
+  const delay = (Math.random() * 12).toFixed(1);
+  const rot   = (Math.random() * 60 - 30).toFixed(0);
+  s.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+  s.style.cssText = `left:${left}%;--r:${rot}deg;--s:${size};--dur:${dur}s;--delay:-${delay}s;--fs:${(parseFloat(size)*1.1).toFixed(2)}rem;`;
+  rain.appendChild(s);
+}
+
+// ─── GUEST SEARCH ───
+let currentGuest = null;
+
+function normalize(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+}
+
+function capitalize(str) {
+  return str.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+}
+
+function onGuestSearch() {
+  const val = normalize(document.getElementById('gift-search').value);
+  const suggestions = document.getElementById('guest-suggestions');
+  const result = document.getElementById('gift-result');
+  const rsvp = document.getElementById('rsvp-section');
+
+  result.innerHTML = '';
+  rsvp.style.display = 'none';
+  currentGuest = null;
+
+  if(val.length < 2) {
+    suggestions.innerHTML = '';
+    return;
+  }
+
+  const matches = LISTA.filter(g => normalize(g.nome).includes(val));
+
+  if(matches.length === 0) {
+    suggestions.innerHTML = `<div class="gift-not-found">😕 Nome não encontrado. Tente novamente ou fale com a família!</div>`;
+    return;
+  }
+
+  suggestions.innerHTML = matches.map((g, i) => `
+    <div class="suggestion-item" onclick="selectGuest(${LISTA.indexOf(g)})">
+      <span class="suggestion-name">👤 ${capitalize(g.nome)}</span>
+      <span class="suggestion-arrow">→</span>
+    </div>
+  `).join('');
+}
+
+function selectGuest(idx) {
+  const g = LISTA[idx];
+  currentGuest = g;
+
+  document.getElementById('guest-suggestions').innerHTML = '';
+  document.getElementById('gift-search').value = capitalize(g.nome);
+
+  document.getElementById('gift-result').innerHTML = `
+    <div class="gift-card" style="margin-top:14px">
+      <div class="gc-name">👤 ${capitalize(g.nome)}</div>
+      <div><span class="gc-gift">🎁 ${g.presente}</span></div>
+      <div class="gc-note">${sizeNote[g.presente] || ''}</div>
+      <div class="gc-check">↓ Role abaixo para confirmar sua presença</div>
+    </div>`;
+
+  document.getElementById('rsvp-name').value = capitalize(g.nome);
+  document.getElementById('rsvp-presente-display').value = g.presente;
+  const rsvp = document.getElementById('rsvp-section');
+  rsvp.style.display = 'block';
+  setTimeout(() => rsvp.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+}
+
+// ─── RSVP SUBMIT ───
+async function submitRSVP() {
+  const name   = document.getElementById('rsvp-name').value.trim();
+  const qty    = document.getElementById('rsvp-qty').value;
+  const msg    = document.getElementById('rsvp-msg').value.trim();
+  const btn    = document.getElementById('rsvp-btn');
+  const btnTxt = document.getElementById('btn-text');
+
+  if(!name) {
+    document.getElementById('rsvp-name').focus();
+    document.getElementById('rsvp-name').style.borderColor = '#e53935';
+    setTimeout(() => document.getElementById('rsvp-name').style.borderColor = '', 1500);
+    return;
+  }
+
+  btn.disabled = true;
+  btnTxt.innerHTML = `<span class="dot-loader"><span></span><span></span><span></span></span>`;
+
+  const presente = currentGuest ? currentGuest.presente : '—';
+  const timestamp = new Date().toLocaleString('pt-BR');
+
+  const payload = { nome: name, pessoas: qty, presente, mensagem: msg, timestamp };
+
+  try {
+    if(APPS_SCRIPT_URL) {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } else {
+      // DEMO — simula delay
+      await new Promise(r => setTimeout(r, 1200));
+      console.log('RSVP (demo):', payload);
+    }
+    showSuccess();
+  } catch(err) {
+    console.error(err);
+    showSuccess(); // mostra sucesso mesmo assim — apps script no-cors não retorna resposta
+  }
+}
+
+function showSuccess() {
+  document.getElementById('rsvp-form-wrap').style.display = 'none';
+  const s = document.getElementById('success-msg');
+  s.style.display = 'block';
+}
+</script>
+
+<!--
+══════════════════════════════════════════════════════════════
+  INSTRUÇÕES PARA A ANA PAULA — COMO RECEBER AS CONFIRMAÇÕES
+══════════════════════════════════════════════════════════════
+
+  1. Acesse: https://script.google.com/home
+  2. Clique em "Novo projeto"
+  3. Cole o código abaixo no editor e salve:
+
+---
+
+function doPost(e) {
+  var data = JSON.parse(e.postData.contents);
+  var sheet = SpreadsheetApp.openById('1zNRYGLiZBHiY--j8TyfRv3H0xzkA4G6f9Tcpq5mPTvk').getActiveSheet();
+
+  if(sheet.getLastRow() === 0) {
+    sheet.appendRow(['Timestamp','Nome','Pessoas','Presente','Mensagem']);
+  }
+
+  sheet.appendRow([
+    data.timestamp,
+    data.nome,
+    data.pessoas,
+    data.presente,
+    data.mensagem
+  ]);
+
+  return ContentService
+    .createTextOutput(JSON.stringify({status:'ok'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+---
+
+  ✅ O ID da planilha já está configurado: 1zNRYGLiZBHiY--j8TyfRv3H0xzkA4G6f9Tcpq5mPTvk
+     https://docs.google.com/spreadsheets/d/1zNRYGLiZBHiY--j8TyfRv3H0xzkA4G6f9Tcpq5mPTvk/
+
+  4. Clique em "Implantar" > "Nova implantação"
+  5. Tipo: "App da Web"
+  6. Execute como: "Eu (sua conta Google)"
+  7. Acesso: "Qualquer pessoa"
+  8. Autorize as permissões solicitadas
+  9. Copie a URL gerada e cole no topo do HTML onde diz:
+     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzIkee9USwi6OLUxjhGC89uPsafakp_yQaJFHSm-yO8wF61efKFQKoHP9fVwVEL9PySWg/exec';
+
+  10. Compartilhe a planilha com Ana Paula Silveira pelo e-mail dela —
+      as confirmações chegarão com: data/hora, nome, pessoas, fralda e mensagem! 🎉
+
+══════════════════════════════════════════════════════════════
+-->
+</body>
+</html>
